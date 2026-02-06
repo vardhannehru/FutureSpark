@@ -105,6 +105,25 @@ const Footer: React.FC = () => {
               Igniting the next generation of visionary leaders through innovation, empathy, and academic excellence.
             </p>
 
+            <div className="mt-4 text-sm text-slate-300 space-y-2">
+              <div>
+                <span className="font-bold text-white/90">Phone:</span>{" "}
+                <a href="tel:+918977653606" className="hover:text-brand-light transition-colors">
+                  +91 89776 53606
+                </a>
+                <span className="text-slate-400"> / </span>
+                <a href="tel:+918977651606" className="hover:text-brand-light transition-colors">
+                  +91 89776 51606
+                </a>
+              </div>
+              <div>
+                <span className="font-bold text-white/90">Email:</span>{" "}
+                <a href="mailto:futuresparkint@gmail.com" className="hover:text-brand-light transition-colors">
+                  futuresparkint@gmail.com
+                </a>
+              </div>
+            </div>
+
             <div className="mb-6 text-sm text-slate-300 space-y-1">
               <div>
                 <span className="font-bold text-white/90">CBSE Affiliation No:</span> 3630013

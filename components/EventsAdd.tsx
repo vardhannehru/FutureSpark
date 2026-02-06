@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ADMIN_TOKEN_STORAGE_KEY = "future_spark_admin_token_v1";
@@ -52,10 +52,20 @@ type Draft = {
   description: string;
 };
 
+type EventItem = Draft & {
+  sheetRow: number;
+};
+
 const EventsAdd: React.FC = () => {
   const nav = useNavigate();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [okMsg, setOkMsg] = useState<string | null>(null);
+
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [loadingEvents, setLoadingEvents] = useState(false);
+  const [editingRow, setEditingRow] = useState<number | null>(null);
+  const [deletingRow, setDeletingRow] = useState<number | null>(null);
 
   const logout = () => {
     try {
@@ -78,7 +88,7 @@ const EventsAdd: React.FC = () => {
 
   const [token, setToken] = useState(() => getStoredToken());
 
-  React.useEffect(() => {
+  useEffect(() => {
     const sync = () => setToken(getStoredToken());
     sync();
     window.addEventListener("storage", sync);
@@ -86,14 +96,49 @@ const EventsAdd: React.FC = () => {
   }, []);
 
   // Route protection: require login to view this page
-  React.useEffect(() => {
+  useEffect(() => {
     if (!token) {
       nav("/events-admin?next=add-event-page", { replace: true });
     }
   }, [token, nav]);
 
+  const loadEvents = async () => {
+    if (!token || !EVENTS_ENDPOINT) return;
+    setLoadingEvents(true);
+    try {
+      const url = withQuery(
+        `${EVENTS_ENDPOINT}${EVENTS_ENDPOINT.includes("?") ? "&" : "?"}_ts=${Date.now()}`,
+        { token },
+      );
+      const res = await fetch(url, { cache: "no-store" });
+      const j = await res.json().catch(() => null);
+      if (!res.ok || !j || j.ok !== true || !Array.isArray(j.events)) return;
+
+      const mapped: EventItem[] = j.events
+        .map((e: any) => ({
+          sheetRow: Number(e.sheetRow || 0),
+          title: String(e.title || ""),
+          dateISO: String(e.dateISO || ""),
+          time24: String(e.time24 || ""),
+          venue: String(e.venue || ""),
+          badge: String(e.badge || ""),
+          description: String(e.description || ""),
+        }))
+        .filter((e: any) => Number.isFinite(e.sheetRow) && e.sheetRow >= 2 && e.title.trim());
+
+      setEvents(mapped);
+    } finally {
+      setLoadingEvents(false);
+    }
+  };
+
+  useEffect(() => {
+    loadEvents();
+  }, [token]);
+
   const save = async () => {
     setErr(null);
+    setOkMsg(null);
 
     if (!token) {
       nav("/events-admin?next=add-event-page");
@@ -127,6 +172,8 @@ const EventsAdd: React.FC = () => {
         },
         body: JSON.stringify({
           formType: "events",
+          action: editingRow ? "update" : "",
+          sheetRow: editingRow || undefined,
           title: draft.title.trim(),
           dateISO: draft.dateISO.trim(),
           time24: draft.time24.trim(),
@@ -139,7 +186,10 @@ const EventsAdd: React.FC = () => {
       const j = await res.json().catch(() => null);
       if (!res.ok || !j || j.ok !== true) throw new Error("Failed");
 
-      nav("/");
+      setOkMsg(editingRow ? "Updated event successfully." : "Added event successfully.");
+      setEditingRow(null);
+      setDraft({ badge: "", title: "", dateISO: "", time24: "", venue: "", description: "" });
+      await loadEvents();
     } catch {
       setErr("Could not save event (check admin token / Apps Script / internet).");
     } finally {
@@ -250,6 +300,7 @@ const EventsAdd: React.FC = () => {
           </label>
 
           {err ? <div className="mt-2 text-sm font-bold text-rose-700">{err}</div> : null}
+          {okMsg ? <div className="mt-2 text-sm font-bold text-emerald-700">{okMsg}</div> : null}
 
           <div className="mt-2 flex gap-3 justify-end">
             <button
@@ -266,10 +317,120 @@ const EventsAdd: React.FC = () => {
               disabled={busy}
               className="px-5 py-3 rounded-xl font-bold text-white bg-brand-dark hover:bg-brand-light disabled:opacity-60 transition"
             >
-              {busy ? "Saving..." : "Save Event"}
+              {busy ? "Saving..." : editingRow ? "Update Event" : "Save Event"}
             </button>
           </div>
+
+          {editingRow ? (
+            <div className="mt-3 text-xs text-slate-500">
+              Editing existing event (Sheet row #{editingRow}).{" "}
+              <button
+                type="button"
+                className="underline font-bold"
+                onClick={() => {
+                  setEditingRow(null);
+                  setDraft({ badge: "", title: "", dateISO: "", time24: "", venue: "", description: "" });
+                }}
+              >
+                Cancel edit
+              </button>
+            </div>
+          ) : null}
         </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto mt-8 rounded-3xl bg-white/80 backdrop-blur-xl border border-slate-200 shadow-xl p-6">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="text-lg font-extrabold text-brand-dark">Manage events</div>
+          <button
+            type="button"
+            onClick={loadEvents}
+            disabled={loadingEvents}
+            className="px-4 py-2 rounded-xl font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-60 transition"
+          >
+            {loadingEvents ? "Refreshing..." : "Refresh"}
+          </button>
+        </div>
+
+        {events.length ? (
+          <div className="mt-4 grid md:grid-cols-2 gap-4">
+            {events.map((ev) => (
+              <div key={ev.sheetRow} className="rounded-2xl border border-slate-200 bg-white p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="text-xs font-bold text-brand-light">Row #{ev.sheetRow}</div>
+                    <div className="mt-1 font-extrabold text-slate-900">{ev.title}</div>
+                    <div className="mt-1 text-sm text-slate-600">{formatEventMeta(ev) || ""}</div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOkMsg(null);
+                        setErr(null);
+                        setEditingRow(ev.sheetRow);
+                        setDraft({
+                          badge: ev.badge || "",
+                          title: ev.title || "",
+                          dateISO: ev.dateISO || "",
+                          time24: ev.time24 || "",
+                          venue: ev.venue || "",
+                          description: ev.description || "",
+                        });
+                      }}
+                      className="px-3 py-2 rounded-xl font-bold text-slate-700 bg-slate-50 border border-slate-200 hover:bg-slate-100 transition"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      disabled={deletingRow === ev.sheetRow}
+                      onClick={async () => {
+                        if (!EVENTS_ENDPOINT) return;
+                        const ok = window.confirm(`Delete event "${ev.title}"?`);
+                        if (!ok) return;
+
+                        setDeletingRow(ev.sheetRow);
+                        setErr(null);
+                        setOkMsg(null);
+                        try {
+                          const base = getEventsEndpointBase(EVENTS_ENDPOINT);
+                          const postUrl = withQuery(base, token ? { token } : {});
+                          const res = await fetch(postUrl, {
+                            method: "POST",
+                            headers: {
+                              "content-type": "text/plain;charset=UTF-8",
+                            },
+                            body: JSON.stringify({
+                              formType: "events",
+                              action: "delete",
+                              sheetRow: ev.sheetRow,
+                            }),
+                          });
+                          const j = await res.json().catch(() => null);
+                          if (!res.ok || !j || j.ok !== true) throw new Error(j?.error || "Failed");
+                          setOkMsg("Deleted event.");
+                          await loadEvents();
+                        } catch {
+                          setErr("Could not delete event.");
+                        } finally {
+                          setDeletingRow(null);
+                        }
+                      }}
+                      className="px-3 py-2 rounded-xl font-bold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 transition disabled:opacity-60"
+                    >
+                      {deletingRow === ev.sheetRow ? "Deleting..." : "Delete"}
+                    </button>
+                  </div>
+                </div>
+
+                {ev.description ? <div className="mt-3 text-sm text-slate-700">{ev.description}</div> : null}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-4 text-sm text-slate-600">No events found.</div>
+        )}
       </div>
     </section>
   );

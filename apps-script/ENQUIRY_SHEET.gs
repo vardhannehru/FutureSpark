@@ -139,6 +139,7 @@ function doGet(e) {
           }
 
           return {
+            sheetRow: Number(o.sheetRow || 0),
             title: String(o.title || o.Title || '').trim(),
             dateISO,
             time24,
@@ -189,6 +190,33 @@ function doPost(e) {
 
         // Prevent deleting header row
         sheet.deleteRow(sheetRow);
+        return jsonResponse_({ ok: true }, 200);
+      }
+
+      // Update an existing event by sheetRow
+      if (action === 'update') {
+        const sheetRow = Number(data.sheetRow);
+        if (!Number.isFinite(sheetRow) || sheetRow < 2) {
+          return jsonResponse_({ ok: false, error: 'Invalid sheetRow' }, 400);
+        }
+
+        const title = String(data.title || '').trim();
+        if (!title) return jsonResponse_({ ok: false, error: 'Missing title' }, 400);
+
+        const dateISO = String(data.dateISO || '').trim();
+        const time24 = String(data.time24 || '').trim();
+        const venue = String(data.venue || '').trim();
+        const badge = String(data.badge || '').trim();
+        const description = String(data.description || '').trim();
+
+        // Columns: title, date, time, venue, badge, description
+        sheet.getRange(sheetRow, 1).setValue(title);
+        sheet.getRange(sheetRow, 2).setValue(dateISO);
+        sheet.getRange(sheetRow, 3).setValue(time24);
+        sheet.getRange(sheetRow, 4).setValue(venue);
+        sheet.getRange(sheetRow, 5).setValue(badge);
+        sheet.getRange(sheetRow, 6).setValue(description);
+
         return jsonResponse_({ ok: true }, 200);
       }
 
