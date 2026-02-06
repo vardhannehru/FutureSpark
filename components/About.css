@@ -1,0 +1,56 @@
+.aboutSection {
+  padding: 4rem 1.5rem;
+}
+
+.aboutContainer {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Reveal animation (on scroll into view) */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+
+.reveal.isVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger cards */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.card {
+  padding: 1rem;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 40px rgba(2, 6, 23, 0.08);
+  transition: transform 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(160, 121, 255, 0.45);
+  box-shadow: 0 22px 56px rgba(2, 6, 23, 0.12);
+}
+
+.delay1 { transition-delay: 80ms; }
+.delay2 { transition-delay: 160ms; }
+.delay3 { transition-delay: 240ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .card {
+    transition: none;
+    transform: none;
+  }
+}

@@ -1,0 +1,134 @@
+Future Spark International School – Website (School WEBBY)
+======================================================
+
+Quick Summary (for anyone new)
+- This is the school website built using React + TypeScript + Vite.
+- The website has a public Gallery page.
+- Admin can add/delete Events and Gallery photos using admin pages.
+- Enquiry form goes to Google Sheets using a separate Apps Script.
+
+----------------------------------------
+HOW TO RUN (LOCAL)
+----------------------------------------
+1) Open Terminal/Command Prompt in the project root folder
+   C:\Users\vardh\OneDrive\Desktop\School WEBBY
+
+2) Install dependencies (first time only)
+   npm install
+
+3) Start dev server
+   npm run dev -- --host 0.0.0.0 --port 3000
+
+Open in browser:
+- On same laptop: http://localhost:3000/
+- On phone (same Wi‑Fi): http://192.168.29.151:3000/
+
+----------------------------------------
+BUILD (PRODUCTION)
+----------------------------------------
+Command:
+- npm run build
+Output folder:
+- dist\
+
+----------------------------------------
+HOSTING (NETLIFY)
+----------------------------------------
+Netlify settings:
+- Build command: npm run build
+- Publish directory: dist
+
+React Router SPA routing fix already added:
+- public\_redirects
+- netlify.toml
+(So pages like /gallery-admin won't 404 on refresh)
+
+Important: When hosting, add environment variables in Netlify too
+(Site settings -> Build & deploy -> Environment):
+- VITE_ENQUIRY_ENDPOINT
+- VITE_EVENTS_ENDPOINT
+- VITE_GALLERY_ENDPOINT
+
+----------------------------------------
+WHERE DATA IS STORED
+----------------------------------------
+1) Enquiries (Contact/Enquiry form)
+- Stored in: Google Sheet (via ENQUIRY Apps Script)
+- Frontend uses: VITE_ENQUIRY_ENDPOINT
+
+2) Events
+- Stored in: Google Sheet (via EVENTS Apps Script)
+- Frontend uses:
+  - VITE_EVENTS_ENDPOINT (GET list / POST add/delete)
+- Admin login required to add/delete.
+
+3) Gallery Photos
+There are TWO sources of gallery photos:
+
+A) LOCAL PHOTOS (bundled inside the website)
+- Stored in this project folder:
+  components\images\gallery\
+  (Example folders: campus, childrens-day, annual-day-2026)
+- These are included in the build and are always visible.
+
+B) ONLINE PHOTOS (uploaded after hosting)
+- Stored in: Google Drive
+- Root Drive folder ID:
+  1P7SBQW8Sr22V9L36j559bRs5RBMe5cfp
+- Inside this Drive folder, each album is a sub-folder.
+- Website reads albums from the Gallery Apps Script endpoint:
+  VITE_GALLERY_ENDPOINT?type=gallery
+
+----------------------------------------
+ADMIN LOGIN / AUTH
+----------------------------------------
+- Admin password is entered on: /events-admin
+- After login, token is stored in localStorage:
+  key = future_spark_admin_token_v1
+
+Protected admin pages:
+- /events-admin/add   (Add Event)
+- /gallery-admin      (Upload/Delete Gallery photos)
+If not logged in, these pages redirect to /events-admin.
+
+----------------------------------------
+ADMIN PAGES
+----------------------------------------
+1) Events Admin (Login)
+- /events-admin
+
+2) Add Event page
+- /events-admin/add
+
+3) Gallery Admin page
+- /gallery-admin
+Features:
+- Upload photos into ANY album name
+- Upload limit per batch: 15 photos
+- Auto-converts images to WebP in browser before uploading
+- Delete one photo (moves Drive file to Trash)
+- Delete ALL photos in an album (moves all album files to Trash)
+
+----------------------------------------
+APPS SCRIPT (GALLERY)
+----------------------------------------
+Gallery Apps Script project is separate.
+Script Properties required:
+- ADMIN_TOKEN  (SECRET: do not store in repo; set only in Apps Script)
+- GALLERY_ROOT_FOLDER_ID
+
+Image URL format used (reliable for <img>):
+- https://lh3.googleusercontent.com/d/<FILE_ID>=w1200
+
+----------------------------------------
+FOOTER / CREDIT
+----------------------------------------
+Footer shows developer credit:
+Website developed by Penkey Vardhan Sai Raghavendra Nehru
+
+----------------------------------------
+NOTES / TROUBLESHOOTING
+----------------------------------------
+- If "page can't be reached": dev server stopped -> run npm run dev again.
+- If gallery images look broken: ensure Drive files are shared as "Anyone with the link".
+

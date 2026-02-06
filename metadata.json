@@ -1,0 +1,8 @@
+{
+  "name": "Future Spark Academy",
+  "description": "A futuristic, modern school website for Future Spark Academy featuring an AI-powered student assistant, dynamic curriculum visualizations, and an aesthetic glassmorphism design.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
