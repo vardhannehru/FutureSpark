@@ -64,22 +64,27 @@ const EventsAdmin: React.FC = () => {
 
     setBusy(true);
     try {
+      // Try to validate token against the Events endpoint.
+      // If the browser blocks the request (CORS/network), still allow login so admin can proceed.
       const url = withQuery(
         `${EVENTS_ENDPOINT}${EVENTS_ENDPOINT.includes("?") ? "&" : "?"}_ts=${Date.now()}`,
         { token },
       );
-      const res = await fetch(url, { cache: "no-store" });
-      const j = await res.json().catch(() => null);
 
-      if (!res.ok || !j || j.ok !== true) {
-        setErr("Wrong password.");
-        return;
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        const j = await res.json().catch(() => null);
+
+        if (!res.ok || !j || j.ok !== true) {
+          setErr("Wrong password.");
+          return;
+        }
+      } catch {
+        // Best-effort: proceed without validation.
       }
 
       setStoredToken(token);
       nav(nextUrl);
-    } catch {
-      setErr("Could not reach events server. Check internet / Apps Script.");
     } finally {
       setBusy(false);
     }
