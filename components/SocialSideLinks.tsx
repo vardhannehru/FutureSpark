@@ -41,7 +41,8 @@ const IconFacebook = ({ className }: { className?: string }) => (
     className={className}
     aria-hidden="true"
   >
-    <path d="M14 8h3.2V5.2c0-1.1.3-2 1.1-2.7.8-.7 1.9-1 3.2-1h2.3v3h-1.6c-.6 0-1 .1-1.2.3-.2.2-.3.6-.3 1.1V8h3.1l-.5 3H20v13h-6V11h-3V8h3V5.8c0-2.1.6-3.7 1.8-4.8C17 0 18.7-.6 20.9-.6h2.9V2.4h-2.3c-.8 0-1.3.1-1.6.4-.3.3-.4.8-.4 1.6V8Z" />
+    {/* Facebook square logo */}
+    <path d="M22.675 0h-21.35C.597 0 0 .597 0 1.326v21.348C0 23.403.597 24 1.326 24H12.82v-9.294H9.692V11.08h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.796.715-1.796 1.763v2.31h3.587l-.467 3.626h-3.12V24h6.116C23.403 24 24 23.403 24 22.674V1.326C24 .597 23.403 0 22.675 0z" />
   </svg>
 );
 
@@ -83,7 +84,7 @@ const SocialSideLinks: React.FC = () => {
       name: "Facebook",
       href: "https://www.facebook.com/futurespark.int/",
       className: "bg-blue-600 hover:bg-blue-700",
-      icon: <IconFacebook className="w-5 h-5" />,
+      icon: <IconFacebook className="w-6 h-6" />,
     },
   ];
 

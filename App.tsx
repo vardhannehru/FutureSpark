@@ -166,12 +166,18 @@ const App: React.FC = () => {
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="rounded-[2rem] border border-slate-100 bg-white shadow-lg p-8">
                   <div className="font-bold text-slate-900 text-xl">School Office</div>
-                  <div className="mt-4 text-slate-600">
+                  <div className="mt-4 text-slate-600 break-words">
                     Kavuri Hills, Hyderabad
                     <br />
-                    Phone: +91-8977653606
+                    Phone:{" "}
+                    <a href="tel:+918977653606" className="font-semibold text-slate-700 break-all">
+                      +91-8977653606
+                    </a>
                     <br />
-                    Email: hello@futurespark.in
+                    Email:{" "}
+                    <a href="mailto:hello@futurespark.in" className="font-semibold text-slate-700 break-all">
+                      hello@futurespark.in
+                    </a>
                   </div>
                 </div>
 

@@ -127,7 +127,7 @@ const EnquiryForm: React.FC = () => {
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="grid md:grid-cols-2 gap-4">
         <label className="text-sm font-bold text-slate-700">
-          Parent / Guardian Name*
+          Parent / Guardian Name<span className="text-red-600">*</span>
           <input
             value={state.parentName}
             onChange={(e) => setState((s) => ({ ...s, parentName: toTitleCase(e.target.value) }))}
@@ -175,10 +175,10 @@ const EnquiryForm: React.FC = () => {
         </label>
 
         <label className="text-sm font-bold text-slate-700">
-          Phone*
-          <div className="mt-1 flex gap-3">
+          Phone<span className="text-red-600">*</span>
+          <div className="mt-1 flex flex-col sm:flex-row gap-3 w-full min-w-0">
             <div
-              className="relative w-[92px]"
+              className="relative w-full sm:w-[92px]"
               tabIndex={0}
               onBlur={() => setCcOpen(false)}
             >
@@ -229,7 +229,7 @@ const EnquiryForm: React.FC = () => {
                 const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 10);
                 setState((s) => ({ ...s, phone: digitsOnly }));
               }}
-              className="flex-1 rounded-xl bg-slate-50 border-0 ring-1 ring-slate-200/70 px-4 py-3 outline-none focus:ring-2 focus:ring-brand-light"
+              className="flex-1 min-w-0 w-full rounded-xl bg-slate-50 border-0 ring-1 ring-slate-200/70 px-4 py-3 outline-none focus:ring-2 focus:ring-brand-light"
               placeholder={state.countryCode === "+91" ? "10-digit Indian mobile" : "10-digit number"}
               inputMode="numeric"
               pattern="[0-9]*"
@@ -268,6 +268,8 @@ const EnquiryForm: React.FC = () => {
         <div className="text-xs text-slate-500">
           Your enquiry will be saved to our Google Sheet
         </div>
+
+        <div className="text-xs text-slate-900">(<span className="text-red-600">*</span>) Mandatory</div>
 
         <button
           type="submit"

@@ -3,16 +3,16 @@ import PhoneMockup from "./PhoneMockup";
 import logoImg from "./images/futurespark-logo.png";
 
 const StatPill: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-4">
+  <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-3 min-w-0">
     <div className="text-xs font-bold text-slate-500">{label}</div>
-    <div className="mt-1 text-lg font-extrabold text-slate-900">{value}</div>
+    <div className="mt-1 text-[13px] font-extrabold text-slate-900 leading-tight break-words">{value}</div>
   </div>
 );
 
 const Row: React.FC<{ label: string; value: string }> = ({ label, value }) => (
   <div className="flex items-start justify-between gap-4 py-2">
-    <div className="text-sm font-semibold text-slate-700">{label}</div>
-    <div className="text-sm text-slate-600 text-right max-w-[60%]">{value}</div>
+    <div className="text-sm font-semibold text-slate-700 shrink-0">{label}</div>
+    <div className="text-sm text-slate-600 text-right max-w-[60%] break-words">{value}</div>
   </div>
 );
 
@@ -39,6 +39,9 @@ export const MCBScreen: React.FC = () => {
           <div className="text-[11px] font-bold text-brand-light">MY CLASS BOARD</div>
           <div className="text-xl font-extrabold text-slate-900">Parent Dashboard</div>
           <div className="text-xs text-slate-500 mt-1">Today • Updates about your child</div>
+          <div className="text-[11px] text-slate-500 mt-1">
+            (Mockup only — real app will show actual student data.)
+          </div>
         </div>
         <img
           src={logoImg}
@@ -68,7 +71,7 @@ export const MCBScreen: React.FC = () => {
           </div>
           <div className="rounded-2xl bg-white/15 border border-white/20 p-3">
             <div className="text-[10px] font-bold opacity-90">Homework</div>
-            <div className="mt-1 text-sm font-extrabold">2 Pending</div>
+            <div className="mt-1 text-[12px] font-extrabold leading-tight whitespace-nowrap">2 Pending</div>
           </div>
           <div className="rounded-2xl bg-white/15 border border-white/20 p-3">
             <div className="text-[10px] font-bold opacity-90">Diary</div>

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./About.css";
 
-import directorImg from "./images/Director.webp";
 import chairmanImg from "./images/Chairman.jpg";
 import whoWeAreImg from "./images/who-we-are.jpg";
 
@@ -117,13 +116,19 @@ export default function About() {
           </div>
         </div>
 
-        <p className={`reveal ${visible ? "isVisible" : ""}`} style={{ lineHeight: 1.7, opacity: 0.9, marginBottom: "1rem" }}>
+        <p
+          className={`reveal ${visible ? "isVisible" : ""}`}
+          style={{ lineHeight: 1.7, opacity: 0.9, marginBottom: "1rem" }}
+        >
           <strong>Future Spark International School</strong> is located in the serene residential area of{" "}
           <strong>Kavuri Hills, Hyderabad</strong>. As a co-educational institution, the school focuses on academic
           excellence along with all-round development through sports and co-curricular activities.
         </p>
 
-        <p className={`reveal ${visible ? "isVisible" : ""}`} style={{ lineHeight: 1.7, opacity: 0.9, marginBottom: "1rem" }}>
+        <p
+          className={`reveal ${visible ? "isVisible" : ""}`}
+          style={{ lineHeight: 1.7, opacity: 0.9, marginBottom: "1rem" }}
+        >
           We aim to nurture young minds with care and creativity in a vibrant, safe environment that sparks curiosity
           and builds a strong foundation for lifelong learning. We also emphasize discipline and skill-building so
           students grow into citizens our country can be proud of.
@@ -329,8 +334,8 @@ export default function About() {
               <h4 style={{ margin: 0, fontSize: "1.05rem" }}>Dance</h4>
             </div>
             <div style={{ lineHeight: 1.7, opacity: 0.9 }}>
-              Dance creates a healthy environment where students can express their feelings productively while learning to
-              control emotions.
+              Dance creates a healthy environment where students can express their feelings productively while learning
+              to control emotions.
             </div>
           </div>
 
@@ -399,7 +404,7 @@ export default function About() {
                   width: 42,
                   height: 42,
                   borderRadius: 12,
-                  background: "rgba(160, 121, 255, 0.12)",
+                  background: "rgba(160, 121, 255,  0.12)",
                   border: "1px solid rgba(160, 121, 255, 0.25)",
                   display: "grid",
                   placeItems: "center",
@@ -518,52 +523,6 @@ export default function About() {
             >
               <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 10" as any }}>
                 <img
-                  src={directorImg}
-                  alt="Director - Musini Sai Venkata Chaitanya"
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                  loading="lazy"
-                />
-              </div>
-            </div>
-
-            <h4 style={{ margin: 0, marginBottom: ".2rem", fontSize: "1.05rem" }}>
-              Director
-            </h4>
-            <div style={{ fontWeight: 800, marginBottom: ".6rem" }}>
-              Musini Sai Venkata Chaitanya
-            </div>
-
-            <div style={{ fontSize: ".9rem", fontWeight: 800, marginBottom: ".6rem", opacity: 0.85 }}>
-              B.Tech (CSE), B.Ed, Commercial Pilot Licence (CPL)
-            </div>
-
-            <div style={{ marginTop: ".9rem", fontSize: ".9rem", fontWeight: 800, marginBottom: ".6rem", opacity: 0.85 }}>
-              Director’s Message
-            </div>
-            <div style={{ lineHeight: 1.7, opacity: 0.9 }}>
-              As a young and forward-thinking leader, our Director encourages new talent, embraces the latest technology,
-              and is committed to implementing modern trends in education so every child learns with confidence and
-              curiosity.
-            </div>
-          </div>
-
-          <div className={`card reveal delay2 ${visible ? "isVisible" : ""}`}>
-            <div
-              style={{
-                borderRadius: 14,
-                overflow: "hidden",
-                border: "1px solid rgba(15, 23, 42, 0.12)",
-                marginBottom: ".85rem",
-              }}
-            >
-              <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 10" as any }}>
-                <img
                   src={chairmanImg}
                   alt="Chairman - Musini Srinivas"
                   style={{
@@ -579,13 +538,9 @@ export default function About() {
               </div>
             </div>
 
-            <h4 style={{ margin: 0, marginBottom: ".25rem", fontSize: "1.05rem" }}>
-              Chairman
-            </h4>
+            <h4 style={{ margin: 0, marginBottom: ".25rem", fontSize: "0.92rem" }}>Chairman</h4>
             <div style={{ fontWeight: 800, marginBottom: ".15rem" }}>Musini Srinivas</div>
-            <div style={{ fontSize: ".9rem", fontWeight: 800, marginBottom: ".6rem", opacity: 0.85 }}>
-              B.Com, B.Ed
-            </div>
+            <div style={{ fontSize: ".9rem", fontWeight: 800, marginBottom: ".6rem", opacity: 0.85 }}>B.Com, B.Ed</div>
 
             <div style={{ fontSize: ".9rem", fontWeight: 800, marginBottom: ".6rem", opacity: 0.85 }}>
               Chairman’s Message

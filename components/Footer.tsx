@@ -45,12 +45,12 @@ const Footer: React.FC = () => {
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
+          width="22"
+          height="22"
           fill="currentColor"
           viewBox="0 0 24 24"
         >
-          <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-2.2c0-.599.193-1 1.059-1h2.941v-4.381c-.508-.069-2.256-.219-4.284-.219-4.243 0-7.156 2.589-7.156 7.357v3.243z" />
+          <path d="M22.675 0h-21.35C.597 0 0 .597 0 1.326v21.348C0 23.403.597 24 1.326 24H12.82v-9.294H9.692V11.08h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.796.715-1.796 1.763v2.31h3.587l-.467 3.626h-3.12V24h6.116C23.403 24 24 23.403 24 22.674V1.326C24 .597 23.403 0 22.675 0z" />
         </svg>
       ),
     },
@@ -60,12 +60,14 @@ const Footer: React.FC = () => {
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
+          width="22"
+          height="22"
           fill="currentColor"
           viewBox="0 0 24 24"
         >
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z" />
+          <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9Z" />
+          <path d="M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" />
+          <path d="M17.5 6.4a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2Z" />
         </svg>
       ),
     },
@@ -266,12 +268,12 @@ const Footer: React.FC = () => {
               <img
                 src={logoImg}
                 alt="Future Spark Logo"
-                className="h-7 w-7 object-contain"
+                className="h-8 w-8 sm:h-9 sm:w-9 object-contain"
                 loading="lazy"
               />
               <div className="leading-tight">
-                <div className="text-white font-extrabold text-[15px]">Future Spark</div>
-                <div className="text-slate-300 text-[12px] font-semibold">International School</div>
+                <div className="text-white font-extrabold text-[18px] sm:text-[20px]">Future Spark</div>
+                <div className="text-slate-300 text-[12px] sm:text-[13px] font-semibold">International School</div>
               </div>
             </div>
           </div>

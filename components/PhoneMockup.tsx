@@ -22,11 +22,16 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({ title = "MCB", children }) =>
           </div>
 
           {/* Screen */}
-          <div className="max-h-[620px] overflow-auto">{children}</div>
+          <div className="max-h-[620px] overflow-y-auto overflow-x-hidden">
+            <div className="w-full">{children}</div>
+          </div>
         </div>
       </div>
       <div className="mt-3 text-center text-xs text-slate-500">
         Phone UI mockup (preview)
+        <div className="mt-1 text-[11px] text-slate-400">
+          (Mockup only — original app will look different.)
+        </div>
       </div>
     </div>
   );

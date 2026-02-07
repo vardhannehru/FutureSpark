@@ -22,6 +22,7 @@ type HomeEvent = {
   dateISO?: string; // YYYY-MM-DD
   time24?: string; // HH:MM
   venue?: string;
+  posterUrl?: string; // optional image URL
   // Back-compat (older storage)
   meta?: string; // e.g., "10 Feb • 10:00 AM • Auditorium"
   description: string;
@@ -29,6 +30,15 @@ type HomeEvent = {
   // For admin delete: absolute row number in the Google Sheet (1-based)
   sheetRow?: number;
 };
+
+function normalizeDriveImageUrl(url: string) {
+  const u = (url || "").trim();
+  if (!u) return "";
+  // Convert Drive uc view links to thumbnail links (more reliable in <img>)
+  const m = u.match(/drive\.google\.com\/uc\?export=view&id=([^&]+)/i);
+  if (m && m[1]) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1200`;
+  return u;
+}
 
 const EVENTS_STORAGE_KEY = "future_spark_events_v1";
 
@@ -292,6 +302,7 @@ const Home: React.FC = () => {
             const venue = String(r.venue || r.Venue || "").trim();
             const badge = String(r.badge || r.Badge || "").trim();
             const description = String(r.description || r.Description || "").trim();
+            const posterUrl = String(r.posterUrl || r.poster || r.Poster || r["Poster URL"] || r["poster url"] || "").trim();
             const sheetRowRaw = (r.sheetRow ?? r.rowNumber ?? r.row ?? "") as any;
             const sheetRow = Number(sheetRowRaw);
 
@@ -302,6 +313,7 @@ const Home: React.FC = () => {
               dateISO,
               time24,
               venue,
+              posterUrl,
               meta: "",
               description,
               sheetRow: Number.isFinite(sheetRow) && sheetRow > 0 ? sheetRow : undefined,
@@ -346,6 +358,7 @@ const Home: React.FC = () => {
           const venue = (r.venue || r.Venue || "").trim();
           const badge = (r.badge || r.Badge || "").trim();
           const description = (r.description || r.Description || "").trim();
+          const posterUrl = (r.posterUrl || r.poster || r.Poster || r["Poster URL"] || r["poster url"] || "").trim();
 
           const ev: HomeEvent = {
             id: `sheet-${idx}-${title.replace(/\s+/g, "-")}`,
@@ -354,6 +367,7 @@ const Home: React.FC = () => {
             dateISO,
             time24,
             venue,
+            posterUrl,
             meta: "",
             description,
           };
@@ -885,6 +899,17 @@ const Home: React.FC = () => {
                     key={ev.id}
                     className="rounded-2xl p-6 bg-white/70 backdrop-blur-xl border border-slate-200 shadow-lg"
                   >
+                    {ev.posterUrl?.trim() ? (
+                      <div className="-mt-1 mb-4 rounded-2xl overflow-hidden border border-slate-200 bg-white">
+                        <img
+                          src={normalizeDriveImageUrl(ev.posterUrl)}
+                          alt={`${ev.title} poster`}
+                          className="block w-full h-auto"
+                          loading="lazy"
+                        />
+                      </div>
+                    ) : null}
+
                     <div className="flex items-start justify-between gap-4">
                       <div className="text-xs font-bold text-brand-light">{ev.badge || ""}</div>
                       {/* Admin delete removed from Home (use Footer admin links instead) */}

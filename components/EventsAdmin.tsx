@@ -13,6 +13,19 @@ function withQuery(url: string, params: Record<string, string>) {
   return u.toString();
 }
 
+function ensureEventsType(url: string) {
+  // VITE_EVENTS_ENDPOINT can be either:
+  // - .../exec?type=events (recommended), OR
+  // - .../exec (we will add type=events automatically for GETs)
+  try {
+    const u = new URL(url);
+    if (!u.searchParams.get("type")) u.searchParams.set("type", "events");
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
 function getStoredToken() {
   try {
     return (localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || "").trim();
@@ -66,8 +79,9 @@ const EventsAdmin: React.FC = () => {
     try {
       // Try to validate token against the Events endpoint.
       // If the browser blocks the request (CORS/network), still allow login so admin can proceed.
+      const baseGetUrl = ensureEventsType(EVENTS_ENDPOINT);
       const url = withQuery(
-        `${EVENTS_ENDPOINT}${EVENTS_ENDPOINT.includes("?") ? "&" : "?"}_ts=${Date.now()}`,
+        `${baseGetUrl}${baseGetUrl.includes("?") ? "&" : "?"}_ts=${Date.now()}`,
         { token },
       );
 
@@ -116,26 +130,32 @@ const EventsAdmin: React.FC = () => {
           </div>
         ) : null}
 
-        <div className="text-sm font-bold text-slate-800">Enter admin password</div>
-        <input
-          type="password"
-          value={pw}
-          onChange={(e) => setPw(e.target.value)}
-          className="mt-3 w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3"
-          placeholder="Password"
-          autoFocus
-        />
-
-        {err ? <div className="mt-3 text-sm font-bold text-rose-700">{err}</div> : null}
-
-        <button
-          type="button"
-          onClick={login}
-          disabled={busy}
-          className="mt-4 w-full px-5 py-3 rounded-xl font-bold text-white bg-brand-dark hover:bg-brand-light disabled:opacity-60 transition"
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!busy) login();
+          }}
         >
-          {busy ? "Checking..." : "Login"}
-        </button>
+          <div className="text-sm font-bold text-slate-800">Enter admin password</div>
+          <input
+            type="password"
+            value={pw}
+            onChange={(e) => setPw(e.target.value)}
+            className="mt-3 w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3"
+            placeholder="Password"
+            autoFocus
+          />
+
+          {err ? <div className="mt-3 text-sm font-bold text-rose-700">{err}</div> : null}
+
+          <button
+            type="submit"
+            disabled={busy}
+            className="mt-4 w-full px-5 py-3 rounded-xl font-bold text-white bg-brand-dark hover:bg-brand-light disabled:opacity-60 transition"
+          >
+            {busy ? "Checking..." : "Login"}
+          </button>
+        </form>
 
         <button
           type="button"

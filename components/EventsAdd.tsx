@@ -14,6 +14,16 @@ function withQuery(url: string, params: Record<string, string>) {
   return u.toString();
 }
 
+function ensureEventsType(url: string) {
+  try {
+    const u = new URL(url);
+    if (!u.searchParams.get("type")) u.searchParams.set("type", "events");
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
 function getStoredToken() {
   try {
     return (localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || "").trim();
@@ -43,6 +53,47 @@ function formatEventMeta(ev: { dateISO?: string; time24?: string; venue?: string
   return parts.join(" • ");
 }
 
+function normalizeDriveImageUrl(url: string) {
+  const u = (url || "").trim();
+  if (!u) return "";
+  const m = u.match(/drive\.google\.com\/uc\?export=view&id=([^&]+)/i);
+  if (m && m[1]) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1200`;
+  return u;
+}
+
+async function fileToWebpBase64(file: File, opts: { maxW: number; quality: number }) {
+  // Compress in browser to WebP, return base64 (without data: prefix)
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, opts.maxW / bitmap.width);
+  const w = Math.max(1, Math.round(bitmap.width * scale));
+  const h = Math.max(1, Math.round(bitmap.height * scale));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas not supported");
+  ctx.drawImage(bitmap, 0, 0, w, h);
+
+  const blob: Blob | null = await new Promise((resolve) =>
+    canvas.toBlob((b) => resolve(b), "image/webp", opts.quality),
+  );
+  if (!blob) throw new Error("Compression failed");
+
+  const b64 = await new Promise<string>((resolve, reject) => {
+    const r = new FileReader();
+    r.onerror = () => reject(new Error("Failed to read image"));
+    r.onload = () => {
+      const s = String(r.result || "");
+      const m = s.match(/^data:.*?;base64,(.+)$/);
+      resolve(m ? m[1] : "");
+    };
+    r.readAsDataURL(blob);
+  });
+  if (!b64) throw new Error("Base64 conversion failed");
+  return b64;
+}
+
 type Draft = {
   badge: string;
   title: string;
@@ -50,6 +101,7 @@ type Draft = {
   time24: string;
   venue: string;
   description: string;
+  posterUrl: string; // optional
 };
 
 type EventItem = Draft & {
@@ -61,6 +113,10 @@ const EventsAdd: React.FC = () => {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [okMsg, setOkMsg] = useState<string | null>(null);
+
+  const [posterFile, setPosterFile] = useState<File | null>(null);
+  const [posterPreviewUrl, setPosterPreviewUrl] = useState<string>("");
+  const [uploadingPoster, setUploadingPoster] = useState(false);
 
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
@@ -84,6 +140,7 @@ const EventsAdd: React.FC = () => {
     time24: "",
     venue: "",
     description: "",
+    posterUrl: "",
   });
 
   const [token, setToken] = useState(() => getStoredToken());
@@ -106,8 +163,9 @@ const EventsAdd: React.FC = () => {
     if (!token || !EVENTS_ENDPOINT) return;
     setLoadingEvents(true);
     try {
+      const baseGetUrl = ensureEventsType(EVENTS_ENDPOINT);
       const url = withQuery(
-        `${EVENTS_ENDPOINT}${EVENTS_ENDPOINT.includes("?") ? "&" : "?"}_ts=${Date.now()}`,
+        `${baseGetUrl}${baseGetUrl.includes("?") ? "&" : "?"}_ts=${Date.now()}`,
         { token },
       );
       const res = await fetch(url, { cache: "no-store" });
@@ -123,6 +181,7 @@ const EventsAdd: React.FC = () => {
           venue: String(e.venue || ""),
           badge: String(e.badge || ""),
           description: String(e.description || ""),
+          posterUrl: String(e.posterUrl || e.poster || ""),
         }))
         .filter((e: any) => Number.isFinite(e.sheetRow) && e.sheetRow >= 2 && e.title.trim());
 
@@ -135,6 +194,74 @@ const EventsAdd: React.FC = () => {
   useEffect(() => {
     loadEvents();
   }, [token]);
+
+  useEffect(() => {
+    // cleanup preview blob URL
+    return () => {
+      try {
+        if (posterPreviewUrl) URL.revokeObjectURL(posterPreviewUrl);
+      } catch {
+        // ignore
+      }
+    };
+  }, [posterPreviewUrl]);
+
+  const uploadPoster = async () => {
+    setErr(null);
+    setOkMsg(null);
+
+    if (!token) {
+      nav("/events-admin?next=add-event-page");
+      return;
+    }
+    if (!EVENTS_ENDPOINT) {
+      setErr("Events endpoint not configured. Ask developer to set VITE_EVENTS_ENDPOINT.");
+      return;
+    }
+    if (!posterFile) {
+      setErr("Please pick a poster image.");
+      return;
+    }
+
+    setUploadingPoster(true);
+    try {
+      const b64 = await fileToWebpBase64(posterFile, { maxW: 1400, quality: 0.78 });
+      const filename = `${Date.now()}-event-poster.webp`;
+
+      const base = getEventsEndpointBase(EVENTS_ENDPOINT);
+      const postUrl = withQuery(base, token ? { token } : {});
+
+      const res = await fetch(postUrl, {
+        method: "POST",
+        headers: {
+          "content-type": "text/plain;charset=UTF-8",
+        },
+        body: JSON.stringify({
+          formType: "events",
+          action: "uploadPoster",
+          filename,
+          contentType: "image/webp",
+          base64: b64,
+        }),
+      });
+
+      const j = await res.json().catch(() => null);
+      if (!res.ok || !j || j.ok !== true) {
+        throw new Error(j?.error || "Poster upload failed (server not updated yet)."
+        );
+      }
+
+      const posterUrl = normalizeDriveImageUrl(String(j.posterUrl || j.src || j.url || "").trim());
+      if (!posterUrl) throw new Error("Poster uploaded but no URL returned by server.");
+
+      setDraft((d) => ({ ...d, posterUrl }));
+      setOkMsg("Poster uploaded. Now click Save Event.");
+    } catch (e: any) {
+      setErr(e?.message || "Poster upload failed");
+    } finally {
+      setUploadingPoster(false);
+    }
+  };
 
   const save = async () => {
     setErr(null);
@@ -179,6 +306,7 @@ const EventsAdd: React.FC = () => {
           time24: draft.time24.trim(),
           venue: draft.venue.trim(),
           badge: draft.badge.trim(),
+          posterUrl: draft.posterUrl.trim(),
           description: draft.description.trim(),
         }),
       });
@@ -188,7 +316,7 @@ const EventsAdd: React.FC = () => {
 
       setOkMsg(editingRow ? "Updated event successfully." : "Added event successfully.");
       setEditingRow(null);
-      setDraft({ badge: "", title: "", dateISO: "", time24: "", venue: "", description: "" });
+      setDraft({ badge: "", title: "", dateISO: "", time24: "", venue: "", posterUrl: "", description: "" });
       await loadEvents();
     } catch {
       setErr("Could not save event (check admin token / Apps Script / internet).");
@@ -289,6 +417,68 @@ const EventsAdd: React.FC = () => {
             Preview: <span className="font-semibold">{formatEventMeta(draft) || ""}</span>
           </div>
 
+          <div className="grid gap-3">
+            <label className="text-sm font-bold text-slate-700">
+              Poster (optional)
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const f = e.target.files?.[0] || null;
+                  setPosterFile(f);
+                  try {
+                    if (posterPreviewUrl) URL.revokeObjectURL(posterPreviewUrl);
+                  } catch {
+                    // ignore
+                  }
+                  setPosterPreviewUrl(f ? URL.createObjectURL(f) : "");
+                }}
+                className="mt-1 block w-full"
+              />
+              <div className="mt-1 text-[11px] font-medium text-slate-500">
+                Upload like Gallery Admin (this needs server support). If upload is not enabled, you can still paste a URL below.
+              </div>
+            </label>
+
+            <div className="flex gap-3 flex-wrap justify-end">
+              <button
+                type="button"
+                onClick={uploadPoster}
+                disabled={uploadingPoster || busy || !posterFile}
+                className="px-4 py-2 rounded-xl font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-60 transition"
+              >
+                {uploadingPoster ? "Uploading poster..." : "Upload poster"}
+              </button>
+            </div>
+
+            <label className="text-sm font-bold text-slate-700">
+              Poster URL (optional)
+              <input
+                value={draft.posterUrl}
+                onChange={(e) => setDraft((d) => ({ ...d, posterUrl: e.target.value }))}
+                className="mt-1 w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-2"
+                placeholder="https://... (image link)"
+              />
+            </label>
+
+            {posterPreviewUrl || draft.posterUrl?.trim() ? (
+              <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+                <div className="text-xs font-bold text-slate-600 px-4 py-2 bg-slate-50">Poster Preview</div>
+                <div className="p-3">
+                  <img
+                    src={posterPreviewUrl ? posterPreviewUrl.trim() : normalizeDriveImageUrl(draft.posterUrl)}
+                    alt="Event poster preview"
+                    className="w-full h-auto rounded-xl border border-slate-200"
+                    loading="lazy"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                </div>
+              </div>
+            ) : null}
+          </div>
+
           <label className="text-sm font-bold text-slate-700">
             Description
             <textarea
@@ -329,7 +519,7 @@ const EventsAdd: React.FC = () => {
                 className="underline font-bold"
                 onClick={() => {
                   setEditingRow(null);
-                  setDraft({ badge: "", title: "", dateISO: "", time24: "", venue: "", description: "" });
+                  setDraft({ badge: "", title: "", dateISO: "", time24: "", venue: "", posterUrl: "", description: "" });
                 }}
               >
                 Cancel edit
@@ -357,10 +547,20 @@ const EventsAdd: React.FC = () => {
             {events.map((ev) => (
               <div key={ev.sheetRow} className="rounded-2xl border border-slate-200 bg-white p-4">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
+                  <div className="min-w-0">
                     <div className="text-xs font-bold text-brand-light">Row #{ev.sheetRow}</div>
-                    <div className="mt-1 font-extrabold text-slate-900">{ev.title}</div>
+                    <div className="mt-1 font-extrabold text-slate-900 break-words">{ev.title}</div>
                     <div className="mt-1 text-sm text-slate-600">{formatEventMeta(ev) || ""}</div>
+                    {ev.posterUrl?.trim() ? (
+                      <div className="mt-3">
+                        <img
+                          src={normalizeDriveImageUrl(ev.posterUrl)}
+                          alt="Event poster"
+                          className="w-full h-auto rounded-xl border border-slate-200"
+                          loading="lazy"
+                        />
+                      </div>
+                    ) : null}
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -375,6 +575,7 @@ const EventsAdd: React.FC = () => {
                           dateISO: ev.dateISO || "",
                           time24: ev.time24 || "",
                           venue: ev.venue || "",
+                          posterUrl: (ev as any).posterUrl || "",
                           description: ev.description || "",
                         });
                       }}
