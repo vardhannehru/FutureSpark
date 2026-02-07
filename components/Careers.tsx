@@ -48,7 +48,7 @@ const Careers: React.FC = () => {
               <br />
               Phone/WhatsApp: <strong>+91-8977653606</strong>
               <br />
-              Email: <strong>hello@futurespark.in</strong>
+              Email: <strong>futuresparkint@gmail.com</strong>
             </div>
           </div>
         </div>

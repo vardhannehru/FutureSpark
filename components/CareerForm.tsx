@@ -305,7 +305,7 @@ const CareerForm: React.FC = () => {
               return (
                 <label
                   key={role}
-                  className={`flex items-center gap-3 rounded-xl px-3 py-2 bg-slate-50 ring-1 ring-slate-200/70 cursor-pointer select-none ${
+                  className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 bg-slate-50 ring-1 ring-slate-200/70 cursor-pointer select-none ${
                     checked ? "ring-brand-light/70" : ""
                   }`}
                 >
@@ -318,9 +318,29 @@ const CareerForm: React.FC = () => {
                         : state.positions.filter((r) => r !== role);
                       setState((s) => ({ ...s, positions: next }));
                     }}
-                    className="h-4 w-4"
+                    className="sr-only peer"
                   />
-                  <span className="text-sm font-semibold text-slate-700">{role}</span>
+                  <span
+                    className={`inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded border transition-colors ${
+                      checked
+                        ? "bg-brand-light border-brand-light text-white"
+                        : "bg-white border-slate-300 text-transparent"
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="h-3 w-3"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.75"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  </span>
+                  <span className="text-xs font-medium text-slate-700 leading-snug">{role}</span>
                 </label>
               );
             })}

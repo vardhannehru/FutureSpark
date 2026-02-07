@@ -89,32 +89,39 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="bg-brand-dark text-slate-400 py-20 border-t border-brand-dark">
+    <footer className="bg-brand-dark text-slate-400 py-14 border-t border-brand-dark">
       <div className="container mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-6 md:gap-6 mb-10 items-start">
           {/* Brand */}
-          <div>
-            <div className="mb-0 flex justify-center md:justify-start">
+          <div className="text-left self-start md:col-span-2">
+            {/* Logo + tagline aligned to start at the same top line as other columns */}
+            <div className="flex items-start gap-3">
               <img
                 src={logoImg}
                 alt="Future Spark International School"
-                className="block h-16 w-16 md:h-24 md:w-24 object-contain"
+                className="block h-16 w-16 sm:h-20 sm:w-20 object-contain flex-shrink-0"
                 loading="lazy"
               />
+
+              <p className="mt-0 mb-3 leading-relaxed text-slate-300 text-sm">
+                Igniting the next generation of visionary leaders through innovation, empathy, and academic excellence.
+              </p>
             </div>
 
-            <p className="mt-0 mb-3 leading-relaxed text-slate-300">
-              Igniting the next generation of visionary leaders through innovation, empathy, and academic excellence.
-            </p>
-
             <div className="mt-4 text-sm text-slate-300 space-y-2">
-              <div>
-                <span className="font-bold text-white/90">Phone:</span>{" "}
-                <a href="tel:+918977653606" className="hover:text-brand-light transition-colors">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="font-bold text-white/90 whitespace-nowrap">Phone:</span>
+                <a
+                  href="tel:+918977653606"
+                  className="hover:text-brand-light transition-colors whitespace-nowrap"
+                >
                   +91 89776 53606
                 </a>
-                <span className="text-slate-400"> / </span>
-                <a href="tel:+918977651606" className="hover:text-brand-light transition-colors">
+                <span className="text-slate-400 whitespace-nowrap">/</span>
+                <a
+                  href="tel:+918977651606"
+                  className="hover:text-brand-light transition-colors whitespace-nowrap"
+                >
                   +91 89776 51606
                 </a>
               </div>
@@ -135,22 +142,7 @@ const Footer: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex gap-4 mb-6">
-              {socialLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={link.name}
-                  className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all text-white ${socialBtnClass(
-                    link.name,
-                  )}`}
-                >
-                  {link.icon}
-                </a>
-              ))}
-            </div>
+            {/* Social icons removed */}
 
             <Link
               to="/contact"
@@ -162,8 +154,8 @@ const Footer: React.FC = () => {
 
           {/* Company */}
           <div>
-            <h4 className="text-white font-bold mb-6">Company</h4>
-            <ul className="space-y-4 text-sm">
+            <h4 className="text-white font-bold mb-4 text-sm">Company</h4>
+            <ul className="space-y-2 text-[11px] sm:text-sm">
               <li>
                 <Link to="/about" className="hover:text-brand-light transition-colors">About</Link>
               </li>
@@ -184,8 +176,8 @@ const Footer: React.FC = () => {
 
           {/* Links */}
           <div>
-            <h4 className="text-white font-bold mb-6">Links</h4>
-            <ul className="space-y-4 text-sm">
+            <h4 className="text-white font-bold mb-4 text-sm">Links</h4>
+            <ul className="space-y-2 text-[11px] sm:text-sm">
               <li>
                 <Link to="/gallery" className="hover:text-brand-light transition-colors">Gallery</Link>
               </li>
@@ -194,32 +186,31 @@ const Footer: React.FC = () => {
 
           {/* Support */}
           <div>
-            <h4 className="text-white font-bold mb-6">Support</h4>
-            <ul className="space-y-4 text-sm">
+            <h4 className="text-white font-bold mb-4 text-sm">Support</h4>
+            <ul className="space-y-2 text-[11px] sm:text-sm">
               <li>
                 <Link to="/contact" className="hover:text-brand-light transition-colors">Contact</Link>
               </li>
             </ul>
+          </div>
 
-            {/* Admin (small + unobtrusive) */}
-            <div className="mt-8">
-              <h4 className="text-white font-bold mb-4">Admin</h4>
-              <ul className="space-y-3 text-sm">
-                <li>
-                  <Link
-                    to={isAdmin ? "/events-admin/add" : "/events-admin?next=add-event-page"}
-                    className="hover:text-brand-light transition-colors"
-                  >
-                    Events Admin
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/gallery-admin" className="hover:text-brand-light transition-colors">Gallery Admin</Link>
-                </li>
-
-                {!isAdmin ? <li className="text-slate-400 text-xs">(Will ask for password)</li> : null}
-              </ul>
-            </div>
+          {/* Admin */}
+          <div>
+            <h4 className="text-white font-bold mb-4 text-sm">Admin</h4>
+            <ul className="space-y-2 text-[11px] sm:text-sm">
+              <li>
+                <Link
+                  to={isAdmin ? "/events-admin/add" : "/events-admin?next=add-event-page"}
+                  className="hover:text-brand-light transition-colors"
+                >
+                  Events Admin
+                </Link>
+              </li>
+              <li>
+                <Link to="/gallery-admin" className="hover:text-brand-light transition-colors">Gallery Admin</Link>
+              </li>
+              {!isAdmin ? <li className="text-slate-400 text-[11px]">(Will ask for password)</li> : null}
+            </ul>
           </div>
         </div>
 
@@ -252,17 +243,17 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom */}
-        <div className="pt-12 mt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 text-base">
-          <div className="text-center md:text-left">
+        <div className="pt-8 mt-4 border-t border-white/10 flex flex-col md:flex-row md:flex-nowrap justify-between items-center gap-3 text-base">
+          <div className="text-center md:text-left text-sm text-slate-300">
             <p>(c) 2026 Future Spark Academy. All rights reserved.</p>
-            <p className="mt-2 text-xs text-slate-400">
-              Website developed by <span className="font-semibold text-slate-200">Penkey Vardhan Sai Raghavendra Nehru</span> <span className="text-slate-400">(9949177805)</span>
+            <p className="mt-1 text-xs text-slate-400">
+              Website developed by{" "}
+              <span className="font-semibold text-slate-200">Penkey Vardhan Sai Raghavendra Nehru</span>{" "}
+              <span className="text-slate-400">(9949177805)</span>
             </p>
           </div>
 
-          <div className="flex items-center gap-6">
-            {/* Terms link removed */}
-
+          <div className="flex items-center gap-3 whitespace-nowrap">
             {/* Small brand mark at end of page */}
             <div className="flex items-center gap-3">
               <img

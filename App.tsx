@@ -175,8 +175,8 @@ const App: React.FC = () => {
                     </a>
                     <br />
                     Email:{" "}
-                    <a href="mailto:hello@futurespark.in" className="font-semibold text-slate-700 break-all">
-                      hello@futurespark.in
+                    <a href="mailto:futuresparkint@gmail.com" className="font-semibold text-slate-700 break-all">
+                      futuresparkint@gmail.com
                     </a>
                   </div>
                 </div>
