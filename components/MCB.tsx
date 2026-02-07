@@ -56,7 +56,7 @@ export const MCBScreen: React.FC = () => {
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="text-sm font-bold opacity-90">Student</div>
-            <div className="text-xl font-extrabold">Student Name</div>
+            <div className="text-xl font-extrabold">Gayatri</div>
             <div className="text-sm opacity-90">Class: Grade 3 • Section A</div>
           </div>
           <div className="rounded-2xl bg-white/15 border border-white/20 px-3 py-2 text-xs font-bold">
