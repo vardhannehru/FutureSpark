@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "./About.css";
 
 import chairmanImg from "./images/Chairman.jpg";
+import directorImg from "./images/director.jpeg";
 import whoWeAreImg from "./images/who-we-are.jpg";
 
 import iconScience from "./images/infrastructure/icons/science.svg";
@@ -552,6 +553,48 @@ export default function About() {
               <br />
               He believes in respecting teachers and building strong values alongside academics, so every child grows
               with confidence, discipline, and character.
+            </div>
+          </div>
+
+          <div className={`card reveal delay2 ${visible ? "isVisible" : ""}`}>
+            <div
+              style={{
+                borderRadius: 14,
+                overflow: "hidden",
+                border: "1px solid rgba(15, 23, 42, 0.12)",
+                marginBottom: ".85rem",
+              }}
+            >
+              <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 10" as any }}>
+                <img
+                  src={directorImg}
+                  alt="Director"
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center top",
+                  }}
+                  loading="lazy"
+                />
+              </div>
+            </div>
+
+            <h4 style={{ margin: 0, marginBottom: ".25rem", fontSize: "0.92rem" }}>Director</h4>
+            <div style={{ fontWeight: 800, marginBottom: ".15rem" }}>Musini Sai Venkata Chaitanya</div>
+            <div style={{ fontSize: ".9rem", fontWeight: 800, marginBottom: ".6rem", opacity: 0.85 }}>
+              B.Ed, B.Tech (CSE), CPL (Commercial Pilot Licence)
+            </div>
+
+            <div style={{ fontSize: ".9rem", fontWeight: 800, marginBottom: ".6rem", opacity: 0.85 }}>
+              Director’s Message
+            </div>
+            <div style={{ lineHeight: 1.7, opacity: 0.9 }}>
+              We believe the next generation deserves a school that blends strong values with modern, student-friendly
+              learning. At Future Spark, we focus on smooth, structured teaching methods, smart use of technology, and a
+              supportive environment where every child learns with confidence and curiosity.
             </div>
           </div>
         </div>
