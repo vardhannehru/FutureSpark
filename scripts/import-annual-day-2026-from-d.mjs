@@ -6,7 +6,7 @@ import sharp from "sharp";
 // Only processes JPG/JPEG/PNG/WEBP (skips CR2/MP4).
 
 const SRC_DIR = "D:/annual day2026";
-const OUT_DIR = path.resolve("components/images/gallery/annual-day-2026");
+const OUT_DIR = path.resolve("src/components/images/gallery/annual-day-2026");
 
 const MAX_IMAGES = 80; // keep site light; increase if needed
 const MAX_WIDTH = 1800; // resize down if bigger

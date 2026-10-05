@@ -5,7 +5,7 @@ import sharp from "sharp";
 // Fix rotated images by applying EXIF orientation and writing back.
 // Uses sharp().rotate() which auto-rotates based on EXIF.
 
-const ROOT = path.resolve(process.cwd(), "components", "images");
+const ROOT = path.resolve(process.cwd(), "src", "components", "images");
 const EXT_OK = new Set([".jpg", ".jpeg", ".png", ".webp", ".JPG", ".JPEG", ".PNG", ".WEBP"]);
 
 async function walk(dir) {
