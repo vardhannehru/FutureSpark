@@ -20,7 +20,6 @@ export default defineConfig(({ mode }) => {
         },
       },
       plugins: [react()],
-      // Spark Assistant removed: no API key defines needed
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
