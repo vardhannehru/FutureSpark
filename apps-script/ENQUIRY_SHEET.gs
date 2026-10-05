@@ -13,9 +13,14 @@ const EVENTS_SHEET_NAME = 'Events';
 
 // Admin tokens
 // - Leave ENQUIRY_TOKEN as-is to avoid breaking your existing enquiry form.
-// - Set EVENTS_TOKEN to a secret so only admins can add events from the website.
+// - EVENTS_TOKEN lives in Script Properties (Project Settings > Script properties), never in code.
+//   Reading events is public. Adding/deleting events requires the token; if it is not set, writes are refused.
 const ENQUIRY_TOKEN = 'CHANGE_ME_TO_A_SECRET'; // optional; if blank, no token check
-const EVENTS_TOKEN = 'fsis123';
+function requireEventsToken_(e) {
+  const expected = (PropertiesService.getScriptProperties().getProperty('EVENTS_TOKEN') || '').trim();
+  if (!expected) throw new Error('Unauthorized');
+  requireToken_(e, expected);
+}
 
 // For Careers resume uploads (Option B):
 // 1) Create a Drive folder for resumes
@@ -90,8 +95,6 @@ function doGet(e) {
     const type = e && e.parameter && e.parameter.type ? String(e.parameter.type) : '';
 
     if (type === 'events') {
-      requireToken_(e, EVENTS_TOKEN);
-
       const ss = SpreadsheetApp.getActiveSpreadsheet();
       const sheet = ss.getSheetByName(EVENTS_SHEET_NAME);
       if (!sheet) {
@@ -173,7 +176,7 @@ function doPost(e) {
     // Events write API (admin-only via token)
     if (formType === 'events') {
       try {
-        requireToken_(e, EVENTS_TOKEN);
+        requireEventsToken_(e);
       } catch {
         return jsonResponse_({ ok: false, error: 'Unauthorized' }, 401);
       }

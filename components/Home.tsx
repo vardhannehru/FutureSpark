@@ -52,10 +52,7 @@ const EVENTS_SHEET_CSV_URL =
 // Faster option (recommended): Google Apps Script Web App endpoint that returns JSON.
 // Set in .env.local:
 //   VITE_EVENTS_ENDPOINT="https://script.google.com/macros/s/<DEPLOYMENT_ID>/exec?type=events"
-// Optional:
-//   VITE_EVENTS_TOKEN="<same token as in Apps Script>"
 const EVENTS_ENDPOINT = (import.meta as any).env?.VITE_EVENTS_ENDPOINT as string | undefined;
-const EVENTS_TOKEN = (import.meta as any).env?.VITE_EVENTS_TOKEN as string | undefined;
 
 const ADMIN_TOKEN_STORAGE_KEY = "future_spark_admin_token_v1";
 
@@ -283,14 +280,15 @@ const Home: React.FC = () => {
     // 1) Try Apps Script JSON endpoint (fast + no Sheets publish caching)
     if (EVENTS_ENDPOINT) {
       try {
-        const token = getAdminToken() || EVENTS_TOKEN || "";
+        const token = getAdminToken();
         const url = withQuery(
           `${EVENTS_ENDPOINT}${EVENTS_ENDPOINT.includes("?") ? "&" : "?"}_ts=${Date.now()}`,
           token ? { token } : {},
         );
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = (await res.json()) as { ok?: boolean; events?: any[] };
+        const json = (await res.json()) as { ok?: boolean; error?: string; events?: any[] };
+        if (json?.ok === false) throw new Error(json.error || "events endpoint error");
         const rows = Array.isArray(json?.events) ? json.events : [];
 
         const mapped: HomeEvent[] = rows
@@ -484,7 +482,7 @@ const Home: React.FC = () => {
 
     // If Apps Script endpoint is configured, write to Google Sheet so it updates everywhere.
     if (EVENTS_ENDPOINT) {
-      const token = getAdminToken() || EVENTS_TOKEN || "";
+      const token = getAdminToken();
       const base = getEventsEndpointBase(EVENTS_ENDPOINT);
 
       const postUrl = withQuery(base, token ? { token } : {});
@@ -537,7 +535,7 @@ const Home: React.FC = () => {
     if (!EVENTS_ENDPOINT || !ev?.sheetRow || !isAdmin) return;
     if (deletingEventId) return;
 
-    const token = getAdminToken() || EVENTS_TOKEN || "";
+    const token = getAdminToken();
     const base = getEventsEndpointBase(EVENTS_ENDPOINT);
     const postUrl = withQuery(base, token ? { token } : {});
 
