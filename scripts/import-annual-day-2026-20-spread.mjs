@@ -3,10 +3,10 @@ import path from "node:path";
 import sharp from "sharp";
 
 // Import 20 *non-continuous* images from D:/annual day2026,
-// compress to WebP, and place into components/images/gallery/annual-day-2026.
+// compress to WebP, and place into src/components/images/gallery/annual-day-2026.
 
 const SRC_DIR = "D:/annual day2026";
-const OUT_DIR = path.resolve("components/images/gallery/annual-day-2026");
+const OUT_DIR = path.resolve("src/components/images/gallery/annual-day-2026");
 
 const COUNT = 20;
 const MAX_WIDTH = 1800;

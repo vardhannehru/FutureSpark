@@ -4,7 +4,7 @@ import sharp from "sharp";
 
 // Compress images in-place.
 // Defaults tuned for web hero/gallery photos.
-const ROOT = path.resolve(process.cwd(), "components", "images");
+const ROOT = path.resolve(process.cwd(), "src", "components", "images");
 const EXT_OK = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".JPG", ".JPEG", ".PNG", ".WEBP", ".GIF"]);
 
 const MAX_WIDTH = Number(process.env.MAX_WIDTH || 1920);

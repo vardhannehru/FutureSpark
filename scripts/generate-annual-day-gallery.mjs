@@ -3,9 +3,9 @@ import path from "node:path";
 import sharp from "sharp";
 
 // Generates placeholder / random images for the Gallery.
-// Output: components/images/gallery/annual-day-2026/*.webp
+// Output: src/components/images/gallery/annual-day-2026/*.webp
 
-const OUT_DIR = path.resolve("components/images/gallery/annual-day-2026");
+const OUT_DIR = path.resolve("src/components/images/gallery/annual-day-2026");
 const COUNT = 12;
 
 function mulberry32(a) {

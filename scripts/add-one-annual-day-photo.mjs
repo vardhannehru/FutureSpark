@@ -12,7 +12,7 @@ if (!srcArg) {
 }
 
 const SRC = srcArg;
-const OUT_DIR = path.resolve("components/images/gallery/annual-day-2026");
+const OUT_DIR = path.resolve("src/components/images/gallery/annual-day-2026");
 
 const MAX_WIDTH = 1800;
 const QUALITY = 72;
