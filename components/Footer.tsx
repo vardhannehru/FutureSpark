@@ -1,28 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const ADMIN_TOKEN_STORAGE_KEY = "future_spark_admin_token_v1";
-
-function hasAdminToken() {
-  try {
-    return !!(localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || "").trim();
-  } catch {
-    return false;
-  }
-}
 import logoImg from "./images/future-spark-logo.png";
 
 const Footer: React.FC = () => {
-  const [isAdmin, setIsAdmin] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsAdmin(hasAdminToken());
-
-    const onStorage = () => setIsAdmin(hasAdminToken());
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
-
   const socialBtnClass = (name: string) => {
     switch (name) {
       case "Facebook":
@@ -91,7 +72,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-brand-dark text-slate-400 py-14 border-t border-brand-dark">
       <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-6 md:gap-6 mb-10 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-6 mb-10 items-start">
           {/* Brand */}
           <div className="text-left self-start md:col-span-2">
             {/* Logo + tagline aligned to start at the same top line as other columns */}
@@ -194,24 +175,6 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Admin */}
-          <div>
-            <h4 className="text-white font-bold mb-4 text-sm">Admin</h4>
-            <ul className="space-y-2 text-[11px] sm:text-sm">
-              <li>
-                <Link
-                  to={isAdmin ? "/events-admin/add" : "/events-admin?next=add-event-page"}
-                  className="hover:text-brand-light transition-colors"
-                >
-                  Events Admin
-                </Link>
-              </li>
-              <li>
-                <Link to="/gallery-admin" className="hover:text-brand-light transition-colors">Gallery Admin</Link>
-              </li>
-              {!isAdmin ? <li className="text-slate-400 text-[11px]">(Will ask for password)</li> : null}
-            </ul>
-          </div>
         </div>
 
         {/* Video (autoplay muted) */}

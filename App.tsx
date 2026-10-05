@@ -10,13 +10,9 @@ import About from "./components/About";
 import Programs from "./components/Programs";
 import AcademicsPage from "./components/Academics";
 import Gallery from "./components/Gallery";
-import GalleryAdmin from "./components/GalleryAdmin";
 import MCB from "./components/MCB";
 import Careers from "./components/Careers";
 import Admissions from "./components/Admissions";
-// AdminPanel removed
-import EventsAdmin from "./components/EventsAdmin";
-import EventsAdd from "./components/EventsAdd";
 
 import Stats from "./components/Stats";
 import EnquiryForm from "./components/EnquiryForm";
@@ -83,16 +79,6 @@ const App: React.FC = () => {
         }
       />
 
-      {/* GALLERY ADMIN */}
-      <Route
-        path="/gallery-admin"
-        element={
-          <PageWrap>
-            <GalleryAdmin />
-          </PageWrap>
-        }
-      />
-
       {/* MCB PAGE */}
       <Route
         path="/mcb"
@@ -119,28 +105,6 @@ const App: React.FC = () => {
         element={
           <PageWrap>
             <Admissions />
-          </PageWrap>
-        }
-      />
-
-      {/* Admin panel removed */}
-
-      {/* EVENTS ADMIN LOGIN */}
-      <Route
-        path="/events-admin"
-        element={
-          <PageWrap>
-            <EventsAdmin />
-          </PageWrap>
-        }
-      />
-
-      {/* EVENTS ADMIN: ADD EVENT PAGE */}
-      <Route
-        path="/events-admin/add"
-        element={
-          <PageWrap>
-            <EventsAdd />
           </PageWrap>
         }
       />

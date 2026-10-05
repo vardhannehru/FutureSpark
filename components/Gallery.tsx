@@ -54,25 +54,9 @@ const defaultGalleries: GallerySection[] = [
 
 const PREVIEW_COUNT = 200; // increase so auto-scroll shows many more images
 
-const ADMIN_TOKEN_STORAGE_KEY = "future_spark_admin_token_v1";
-
-function hasAdminToken() {
-  try {
-    return !!(localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || "").trim();
-  } catch {
-    return false;
-  }
-}
-
 const Gallery: React.FC = () => {
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [remoteGalleries, setRemoteGalleries] = useState<GallerySection[] | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    setIsAdmin(hasAdminToken());
-  }, []);
-
   useEffect(() => {
     if (!GALLERY_ENDPOINT) return;
 
@@ -141,17 +125,6 @@ const Gallery: React.FC = () => {
         <h1 className="text-3xl md:text-5xl font-heading font-bold text-brand-dark">School Gallery</h1>
         <p className="mt-4 text-slate-600 text-lg max-w-2xl mx-auto">Browse event-wise collections — each row auto-scrolls.</p>
 
-        <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
-          <a
-            href="/gallery-admin"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white bg-brand-dark hover:bg-brand-light shadow-lg transition active:scale-95"
-          >
-            Add photos
-          </a>
-          {!isAdmin ? (
-            <div className="text-xs text-slate-500">(Admin login required)</div>
-          ) : null}
-        </div>
       </div>
 
       <div className="space-y-10">
